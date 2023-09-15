@@ -8,12 +8,15 @@ namespace GameProject1
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private Character character;
+        //private Character character;
         private Coin coin;
         private CueBall cueBall;
         private bool Colliding = false;
         private bool CoinColliding = false;
         private Texture2D box;
+        private SpriteFont font;
+        private int coinsCollected = 0;
+        private BoxCharacter boxMan;
 
         public GameProject1()
         {
@@ -27,7 +30,8 @@ namespace GameProject1
         /// </summary>
         protected override void Initialize()
         {
-            character = new Character();
+            //character = new Character();
+            boxMan = new BoxCharacter();
             coin = new Coin();
             cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             base.Initialize();
@@ -36,10 +40,12 @@ namespace GameProject1
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            character.LoadContent(Content);
+            //character.LoadContent(Content);
+            boxMan.LoadContent(Content);
             coin.LoadContent(Content);
             cueBall.LoadContent(Content);
             box = Content.Load<Texture2D>("CoinSprite");
+            font = Content.Load<SpriteFont>("Bangers");
         }
 
         /// <summary>
@@ -50,11 +56,12 @@ namespace GameProject1
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            character.Update(gameTime);
+            boxMan.Update(gameTime);
             cueBall.Update(gameTime);
             
-            if (cueBall.HitBox.Collides(character.HitBox))
+            if (cueBall.HitBox.Collides(boxMan.HitBox))
             {
+                // FINISH if (cueBall.HitBox.Center.X >)
                 Colliding = true;
 
                 Vector2 collisionAxis = cueBall.HitBox.Center - character.HitBox.Center;
@@ -84,6 +91,7 @@ namespace GameProject1
                 CoinColliding = true;
                 coin = new Coin();
                 coin.LoadContent(Content);
+                coinsCollected++;
             }
             else
             {
@@ -105,7 +113,9 @@ namespace GameProject1
             character.Draw(gameTime, spriteBatch, Colliding);
             coin.Draw(gameTime, spriteBatch);
             cueBall.Draw(gameTime, spriteBatch);
-            spriteBatch.DrawString(SpriteFont, "Coins Collected: ", new Vector2(0, 0), Color.White);
+            spriteBatch.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.White);
+            int time = gameTime.TotalGameTime.Seconds;
+            spriteBatch.DrawString(font, "Time: " + time, new Vector2(0, 460), Color.White);
             //spriteBatch.Draw(box, character.HitBox.Center, null, Color.White, 0f, new Vector2(48, 48), new Vector2(1, 1), SpriteEffects.None, 0);
             //spriteBatch.Draw(box, cueBall.HitBox.Center, null, Color.White, 0f, new Vector2(32, 32), new Vector2(0.5f, 0.5f), SpriteEffects.None, 0);
             spriteBatch.End();

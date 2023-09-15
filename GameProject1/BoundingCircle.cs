@@ -37,5 +37,15 @@ namespace GameProject1
                 Math.Pow(this.Center.X - collidingCircle.Center.X, 2) +
                 Math.Pow(this.Center.Y - collidingCircle.Center.Y, 2);
         }
+
+        public bool Collides(BoundingRectangle collidingRectangle)
+        {
+            float nearestX = MathHelper.Clamp(this.Center.X, collidingRectangle.Left, collidingRectangle.Right);
+            float nearestY = MathHelper.Clamp(this.Center.Y, collidingRectangle.Top, collidingRectangle.Bottom);
+
+            return Math.Pow(this.Radius, 2) >=
+                Math.Pow(this.Center.X - nearestX, 2) +
+                Math.Pow(this.Center.Y - nearestY, 2);
+        }
     }
 }
