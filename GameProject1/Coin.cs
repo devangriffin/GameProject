@@ -19,13 +19,17 @@ namespace GameProject1
 
         private const float RADIUS = 16;
 
+        public BoundingCircle HitBox;
+
         /// <summary>
         /// Constructor for a coin
         /// </summary>
         public Coin()
         {
             Random random = new Random();
-            position = new Vector2(random.NextInt64(800), random.NextInt64(480));
+            position = new Vector2(random.NextInt64(800 - 32), random.NextInt64(480 - 32));
+
+            HitBox = new BoundingCircle(new Vector2(position.X + RADIUS, position.Y + RADIUS), RADIUS);
         }
 
         /// <summary>

@@ -14,13 +14,14 @@ namespace GameProject1
         private Texture2D texture;
         private Vector2 position;
         private Vector2 origin = new Vector2(32, 32);
-        private Vector2 velocity;
         private float rotation = 0;
         private double animationTimer;
         private int graphicsWidth;
         private int graphicsHeight;
 
+        public Vector2 Velocity;
         public int Radius = 32;
+        public BoundingCircle HitBox;
 
         /// <summary>
         /// Constructor for the cue ball
@@ -35,9 +36,11 @@ namespace GameProject1
             Random rand = new Random();
             position = new Vector2(rand.NextInt64(width - 64), rand.NextInt64(height - 64));
 
-            velocity = new Vector2(rand.NextInt64(), rand.NextInt64());
-            velocity.Normalize();
-            velocity *= 200;
+            Velocity = new Vector2(rand.NextInt64(), rand.NextInt64());
+            Velocity.Normalize();
+            Velocity *= 400;
+
+            HitBox = new BoundingCircle(new Vector2(position.X, position.Y), Radius);
         }
 
         /// <summary>
@@ -55,11 +58,13 @@ namespace GameProject1
         /// <param name="gameTime">The game time</param>
         public void Update(GameTime gameTime)
         {
-            position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            position += Velocity * t;
+            HitBox.Center += Velocity * t;
 
-            if (position.X < 32 || position.X > graphicsWidth - 32) { velocity.X *= -1; }
-            if (position.Y < 32 || position.Y > graphicsHeight - 32) { velocity.Y *= -1; }
-            
+            if (position.X < 32 || position.X > graphicsWidth - 32) { Velocity.X *= -1; }
+            if (position.Y < 32 || position.Y > graphicsHeight - 32) { Velocity.Y *= -1; }
+                   
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -74,9 +79,11 @@ namespace GameProject1
             spriteBatch.Draw(texture, position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
         }
 
+        /*
         public bool CollidesWith(Character c)
         {
             return Math.Pow(Radius + c.Radius, 2) >= Math.Pow(c.)
         }
+        */
     }
 }
