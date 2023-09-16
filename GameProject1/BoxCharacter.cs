@@ -39,7 +39,7 @@ namespace GameProject1
         public void Update(GameTime gameTime)
         {
             keyState = Keyboard.GetState();
-            int speed = 3;
+            int speed = 4;
 
             if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W)) { position += new Vector2(0, -speed); HitBox.Y += -speed; } // * (float)gameTime.ElapsedGameTime.TotalSeconds}
             if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S)) { position += new Vector2(0, speed); HitBox.Y += speed; }

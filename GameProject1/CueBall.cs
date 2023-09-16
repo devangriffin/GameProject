@@ -34,11 +34,11 @@ namespace GameProject1
             graphicsHeight = height;
 
             Random rand = new Random();
-            position = new Vector2(rand.NextInt64(width - 64), rand.NextInt64(height - 64));
+            position = new Vector2(300, 300);
 
-            Velocity = new Vector2(rand.NextInt64(), rand.NextInt64());
+            Velocity = new Vector2(1, 1);
             Velocity.Normalize();
-            Velocity *= 400;
+            Velocity *= 500;
 
             HitBox = new BoundingCircle(new Vector2(position.X, position.Y), Radius);
         }
