@@ -20,6 +20,12 @@
 /processorParam:TextureFormat=Compressed
 /build:Bangers.spritefont
 
+#begin bounce.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bounce.wav
+
 #begin BoxMan.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -31,6 +37,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:BoxMan.png
+
+#begin coinPickup.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:coinPickup.wav
 
 #begin CoinSprite.png
 /importer:TextureImporter
@@ -67,6 +79,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Space1.jpg
+
+#begin SpaceMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:SpaceMusic.mp3
 
 #begin Yellow.png
 /importer:TextureImporter
