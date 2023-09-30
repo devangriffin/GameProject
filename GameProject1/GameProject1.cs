@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace GameProject1
 {
@@ -8,7 +10,6 @@ namespace GameProject1
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        //private Character character;
         private Coin coin;
         private CueBall cueBall;
         private bool Colliding = false;
@@ -24,6 +25,10 @@ namespace GameProject1
 
         private const int COINENDAMOUNT = 20;
 
+        private Song music;
+        private SoundEffect coinPickup;
+        private SoundEffect bounce;
+
         public GameProject1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -36,7 +41,6 @@ namespace GameProject1
         /// </summary>
         protected override void Initialize()
         {
-            //character = new Character();
             boxMan = new BoxCharacter();
             coin = new Coin();
             cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
@@ -46,12 +50,16 @@ namespace GameProject1
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            //character.LoadContent(Content);
             boxMan.LoadContent(Content);
             coin.LoadContent(Content);
             cueBall.LoadContent(Content);
             background = Content.Load<Texture2D>("Space1");
             font = Content.Load<SpriteFont>("Bangers");
+            coinPickup = Content.Load<SoundEffect>("coinPickup");
+            bounce = Content.Load<SoundEffect>("bounce");
+            music = Content.Load<Song>("SpaceMusic");
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(music);
         }
 
         /// <summary>
@@ -63,7 +71,7 @@ namespace GameProject1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             boxMan.Update(gameTime);
-            cueBall.Update(gameTime);
+            if (!GameOver) { cueBall.Update(gameTime, bounce); }
 
             if (cueBall.HitBox.Collides(boxMan.HitBox))
             {
@@ -72,6 +80,8 @@ namespace GameProject1
                 // Makes sure it doesn't bounce multiple times while colliding
                 if (CueColliding == false)
                 {
+                    bounce.Play();
+
                     float DistanceToX = 0;
                     float DistanceToY = 0;
 
@@ -95,8 +105,8 @@ namespace GameProject1
 
             if (cueBall.HitBox.Collides(coin.HitBox))
             {
-                coin = new Coin();
-                coin.LoadContent(Content);
+                coinPickup.Play();
+                coin.MoveCoin();
                 coinsCollected++;
             }
 
@@ -122,13 +132,16 @@ namespace GameProject1
                 coin.Draw(gameTime, spriteBatch);
                 cueBall.Draw(gameTime, spriteBatch);
                 spriteBatch.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.White);
-                spriteBatch.DrawString(font, "Time: " + minutes + ":" + seconds, new Vector2(0, 456), Color.White);
+                if (seconds < 10) { spriteBatch.DrawString(font, "Time: " + minutes + ":0" + seconds, new Vector2(0, 456), Color.White); }
+                else { spriteBatch.DrawString(font, "Time: " + minutes + ":" + seconds, new Vector2(0, 456), Color.White); }
             }
             else
             {
                 if (GameOver == false) { endSeconds = gameTime.TotalGameTime.Seconds; endMinutes = gameTime.TotalGameTime.Minutes; }
                 GameOver = true;
-                spriteBatch.DrawString(font, "Collected " + COINENDAMOUNT + " Coins in " + endMinutes + ":" + endSeconds + "!", new Vector2(140, 200), Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0);
+
+                if (endSeconds < 10) { spriteBatch.DrawString(font, "Collected " + COINENDAMOUNT + " Coins in " + endMinutes + ":0" + endSeconds + "!", new Vector2(140, 200), Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
+                else { spriteBatch.DrawString(font, "Collected " + COINENDAMOUNT + " Coins in " + endMinutes + ":" + endSeconds + "!", new Vector2(140, 200), Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
             }
             spriteBatch.End();
 
