@@ -2,4 +2,7 @@ Content/Bangers/Bangers-Regular.ttf - Bangers font created by Vernon Adams, rele
 
 Space BackGround was made by Cuzco from OpenGameArt.org
 
+Menu Font was created using font-generator.com
+Music is Space by Music_Unlimited in CC https://pixabay.com/music/upbeat-space-120280/
 All Sprites were made by Devan Griffin using Piskel
+Sound Effects were made using jsxfr

@@ -14,11 +14,12 @@ namespace GameProject1
         private Texture2D texture;
         private double animationTimer;
         private short animationFrame = 1;
-        private Vector2 position;
         private Vector2 origin = new Vector2(16, 16);
+        private Random random = new Random();
 
         private const float RADIUS = 16;
 
+        public Vector2 Position;
         public BoundingCircle HitBox;
 
         /// <summary>
@@ -26,10 +27,9 @@ namespace GameProject1
         /// </summary>
         public Coin()
         {
-            Random random = new Random();
-            position = new Vector2(random.NextInt64(800 - 32), random.NextInt64(480 - 32));
+            Position = new Vector2(random.NextInt64(800 - 32), random.NextInt64(480 - 32));
 
-            HitBox = new BoundingCircle(new Vector2(position.X + RADIUS, position.Y + RADIUS), RADIUS);
+            HitBox = new BoundingCircle(new Vector2(Position.X + RADIUS, Position.Y + RADIUS), RADIUS);
         }
 
         /// <summary>
@@ -89,7 +89,13 @@ namespace GameProject1
                     break;
             }
 
-            spriteBatch.Draw(texture, position, rect, Color.White);
+            spriteBatch.Draw(texture, Position, rect, Color.White);
+        }
+
+        public void MoveCoin()
+        {
+            Position = new Vector2(random.NextInt64(800 - 32), random.NextInt64(480 - 32));
+            HitBox = new BoundingCircle(new Vector2(Position.X + RADIUS, Position.Y + RADIUS), RADIUS);
         }
     }
 }

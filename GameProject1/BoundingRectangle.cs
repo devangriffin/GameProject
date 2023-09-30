@@ -9,7 +9,6 @@ namespace GameProject1
 {
     public class BoundingRectangle
     {
-
         public float X;
 
         public float Y;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -56,14 +57,14 @@ namespace GameProject1
         /// Updates the cue ball
         /// </summary>
         /// <param name="gameTime">The game time</param>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, SoundEffect sound)
         {
             float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
             position += Velocity * t;
             HitBox.Center += Velocity * t;
 
-            if (position.X < 32 || position.X > graphicsWidth - 32) { Velocity.X *= -1; }
-            if (position.Y < 32 || position.Y > graphicsHeight - 32) { Velocity.Y *= -1; }
+            if (position.X < 32 || position.X > graphicsWidth - 32) { Velocity.X *= -1; sound.Play(); }
+            if (position.Y < 32 || position.Y > graphicsHeight - 32) { Velocity.Y *= -1; sound.Play(); }
                    
         }
 
