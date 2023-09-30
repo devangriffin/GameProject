@@ -42,7 +42,7 @@ namespace GameProject1
             cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             base.Initialize();
         }
-
+         
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
