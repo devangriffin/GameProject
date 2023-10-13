@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using ParticleSystemExample;
 using System;
 using System.Collections;
 using System.Threading;
@@ -21,8 +22,9 @@ namespace GameProject1
         private EndScreen endScreen;
 
         private SpriteFont font;
+        private Firework firework;
 
-        public const int COINENDAMOUNT = 20;
+        public const int COINENDAMOUNT = 2;
         
         public GameProject1()
         {
@@ -42,7 +44,7 @@ namespace GameProject1
             menuScreen = new MenuScreen();
             endScreen = new EndScreen(font, COINENDAMOUNT);
 
-            gameplayScreen.Initialize(COINENDAMOUNT);
+            gameplayScreen.Initialize(COINENDAMOUNT, this);
             menuScreen.Initialize();
 
             base.Initialize();
@@ -89,7 +91,8 @@ namespace GameProject1
         {
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin();
+            if (currentScreen == CurrentScreen.EndScreen) { spriteBatch.Begin(transformMatrix: Matrix.CreateScale(1.25f)); }
+            else { spriteBatch.Begin(); }
 
             switch (currentScreen)
             {

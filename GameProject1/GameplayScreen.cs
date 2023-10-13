@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.Threading;
+using ParticleSystemExample;
 
 namespace GameProject1
 {
@@ -33,18 +34,23 @@ namespace GameProject1
         private SoundEffect coinPickup;
         private SoundEffect bounce;
 
+        private Firework firework;
+
         public GameplayScreen(GraphicsDeviceManager graphics, SpriteFont font)
         {
             this.graphics = graphics;
             this.font = font;
         }
 
-        public void Initialize(int endAmount)
+        public void Initialize(int endAmount, Game game)
         {
             boxMan = new BoxCharacter();
             coin = new Coin();
             cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             this.endAmount = endAmount;
+
+            firework = new Firework(game, 40);
+            game.Components.Add(firework);
         }
 
         public void Load(ContentManager c)
@@ -98,6 +104,7 @@ namespace GameProject1
             if (cueBall.HitBox.Collides(coin.HitBox))
             {
                 coinPickup.Play();
+                firework.PlaceFirework(coin.Position);
                 coin.MoveCoin();
                 coinsCollected++;
             }
@@ -107,16 +114,16 @@ namespace GameProject1
         {
             int minutes = gameTime.TotalGameTime.Minutes;
             int seconds = gameTime.TotalGameTime.Seconds;
-
+            
             if (coinsCollected < endAmount)
             {
                 sb.Draw(background, new Vector2(0, 0), Color.White);
                 boxMan.Draw(gameTime, sb, Colliding);
                 coin.Draw(gameTime, sb);
                 cueBall.Draw(gameTime, sb);
-                sb.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.White);
-                if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + seconds, new Vector2(0, 456), Color.White); }
-                else { sb.DrawString(font, "Time: " + minutes + ":" + seconds, new Vector2(0, 456), Color.White); }
+                sb.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.Gold);
+                if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + seconds, new Vector2(0, 456), Color.Gold); }
+                else { sb.DrawString(font, "Time: " + minutes + ":" + seconds, new Vector2(0, 456), Color.Gold); }
 
                 return true;
             }
