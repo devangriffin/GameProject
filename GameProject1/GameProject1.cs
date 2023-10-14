@@ -22,9 +22,8 @@ namespace GameProject1
         private EndScreen endScreen;
 
         private SpriteFont font;
-        private Firework firework;
 
-        public const int COINENDAMOUNT = 2;
+        public const int COINENDAMOUNT = 20;
         
         public GameProject1()
         {
