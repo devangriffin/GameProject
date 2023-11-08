@@ -24,7 +24,12 @@ namespace GameProject1
         private SpriteFont font;
 
         public const int COINENDAMOUNT = 20;
-        
+
+        private Song music;
+
+        public int RecordSeconds = -1;
+        public int RecordMinutes = -1;
+
         public GameProject1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,10 +46,10 @@ namespace GameProject1
 
             gameplayScreen = new GameplayScreen(graphics, font);
             menuScreen = new MenuScreen();
-            endScreen = new EndScreen(font, COINENDAMOUNT);
+            endScreen = new EndScreen(font, COINENDAMOUNT, this);
 
             gameplayScreen.Initialize(COINENDAMOUNT, this);
-            menuScreen.Initialize();
+            menuScreen.Initialize(this);
 
             base.Initialize();
         }
@@ -54,6 +59,10 @@ namespace GameProject1
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             menuScreen.Load(Content);
+
+            music = Content.Load<Song>("SpaceMusic");
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(music);
         }
 
         /// <summary>
@@ -71,7 +80,7 @@ namespace GameProject1
                     gameplayScreen.Update(gameTime);
                     break;
                 case CurrentScreen.Menu:
-                    if (menuScreen.Update()) 
+                    if (menuScreen.Update(gameTime)) 
                     { 
                         currentScreen = CurrentScreen.GamePlay; 
                         gameplayScreen.Load(Content); 
@@ -96,13 +105,13 @@ namespace GameProject1
             switch (currentScreen)
             {
                 case CurrentScreen.GamePlay:
-                    if (!gameplayScreen.Draw(gameTime, spriteBatch)) { currentScreen = CurrentScreen.EndScreen; endScreen.Load(gameTime); break; }
+                    if (!gameplayScreen.Draw(gameTime, spriteBatch)) { endScreen.Load(gameplayScreen); currentScreen = CurrentScreen.EndScreen; }
                     break;
                 case CurrentScreen.Menu:
                     menuScreen.Draw(gameTime, spriteBatch);
                     break;
                 case CurrentScreen.EndScreen:
-                    endScreen.Draw(gameTime, spriteBatch);
+                    if (endScreen.Draw(gameTime, spriteBatch)) { gameplayScreen.ResetGamePlay(); currentScreen = CurrentScreen.Menu; }
                     break;
             }
 

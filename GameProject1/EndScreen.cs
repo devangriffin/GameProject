@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,25 +17,35 @@ namespace GameProject1
         private int endSeconds;
         private int endMinutes;
 
-        public EndScreen(SpriteFont font, int endAmount) 
+        GameProject1 game;
+
+        public EndScreen(SpriteFont font, int endAmount, GameProject1 game) 
         { 
             this.font = font;
             this.endAmount = endAmount;
+
+            this.game = game;
         }
 
-        public void Load(GameTime gameTime)
+        public void Load(GameplayScreen screen)
         {
-            endMinutes = (int)gameTime.TotalGameTime.TotalMinutes;
-            endSeconds = (int)gameTime.TotalGameTime.TotalSeconds - (endMinutes * 60);
+            endMinutes = screen.minutes;
+            endSeconds = (int)screen.seconds;
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch sb)
+        public bool Draw(GameTime gameTime, SpriteBatch sb)
         {
-            //if (GameOver == false) { endSeconds = gameTime.TotalGameTime.Seconds; endMinutes = gameTime.TotalGameTime.Minutes; }
-            //GameOver = true;
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) { return true; }
+
+            sb.DrawString(font, "Press Space to Restart", new Vector2(200, 220), Color.Red);
+
+            if (endSeconds < 10) { sb.DrawString(font, "Best Time - " + game.RecordMinutes + ":0" + game.RecordSeconds, new Vector2(0, 0), Color.White); }
+            else { sb.DrawString(font, "Best Time - " + game.RecordMinutes + ":" + game.RecordSeconds, new Vector2(0, 0), Color.White); }
 
             if (endSeconds < 10) { sb.DrawString(font, "Collected " + endAmount + " Coins in " + endMinutes + ":0" + endSeconds + "!", new Vector2(80, 140), Color.Gold, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
             else { sb.DrawString(font, "Collected " + endAmount + " Coins in " + endMinutes + ":" + endSeconds + "!", new Vector2(80, 140), Color.Gold, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
+
+            return false;
         }
     }
 }

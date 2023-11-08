@@ -30,11 +30,15 @@ namespace GameProject1
         private int endAmount;
         private BoxCharacter boxMan;
 
-        private Song music;
         private SoundEffect coinPickup;
         private SoundEffect bounce;
 
         private Firework firework;
+
+        public float seconds = 0;
+        public int minutes = 0;
+
+        private GameProject1 game;
 
         public GameplayScreen(GraphicsDeviceManager graphics, SpriteFont font)
         {
@@ -42,12 +46,13 @@ namespace GameProject1
             this.font = font;
         }
 
-        public void Initialize(int endAmount, Game game)
+        public void Initialize(int endAmount, GameProject1 game)
         {
             boxMan = new BoxCharacter();
             coin = new Coin();
             cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             this.endAmount = endAmount;
+            this.game = game;
 
             firework = new Firework(game, 40);
             game.Components.Add(firework);
@@ -61,9 +66,9 @@ namespace GameProject1
             background = c.Load<Texture2D>("Space1");
             coinPickup = c.Load<SoundEffect>("coinPickup");
             bounce = c.Load<SoundEffect>("bounce");
-            music = c.Load<Song>("SpaceMusic");
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(music);
+            // music = c.Load<Song>("SpaceMusic");
+            // MediaPlayer.IsRepeating = true;
+            // MediaPlayer.Play(music);
         }
 
         public void Update(GameTime gameTime)
@@ -112,8 +117,13 @@ namespace GameProject1
 
         public bool Draw(GameTime gameTime, SpriteBatch sb)
         {
-            int minutes = gameTime.TotalGameTime.Minutes;
-            int seconds = gameTime.TotalGameTime.Seconds;
+            seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (seconds > 60) 
+            { 
+                minutes++;
+                seconds -= 60;            
+            }
             
             if (coinsCollected < endAmount)
             {
@@ -122,15 +132,27 @@ namespace GameProject1
                 coin.Draw(gameTime, sb);
                 cueBall.Draw(gameTime, sb);
                 sb.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.Gold);
-                if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + seconds, new Vector2(0, 456), Color.Gold); }
-                else { sb.DrawString(font, "Time: " + minutes + ":" + seconds, new Vector2(0, 456), Color.Gold); }
+                if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(0, 456), Color.Gold); }
+                else { sb.DrawString(font, "Time: " + minutes + ":" + (int)seconds, new Vector2(0, 456), Color.Gold); }
 
                 return true;
             }
             else
             {
+                if ((game.RecordMinutes * 60) + game.RecordSeconds > (minutes * 60) + seconds || game.RecordMinutes == -1)
+                {
+                    game.RecordMinutes = minutes;
+                    game.RecordSeconds = (int)seconds;
+                }
                 return false;
             }
+        }
+
+        public void ResetGamePlay()
+        {
+            coinsCollected = 0;
+            minutes = 0;
+            seconds = 0;
         }
     }
 }

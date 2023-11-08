@@ -13,31 +13,55 @@ namespace GameProject1
 {
     public class MenuScreen
     {
-        private Texture2D spaceManText;
+        private Texture2D spaceBounceText;
         private Texture2D startText;
+
+        private Cube cube;
+
+        float timer = 0;
 
         public MenuScreen() { }
 
-        public void Initialize()
+        public void Initialize(Game game)
         {
-
-        }
-        public bool Update()
-        {
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) { return true; }
-            else { return false; }
+            cube = new Cube(game);
         }
 
         public void Load(ContentManager c)
         {
-            spaceManText = c.Load<Texture2D>("SpaceManText");
+            spaceBounceText = c.Load<Texture2D>("SpaceBounceText");
             startText = c.Load<Texture2D>("StartText");
+        }
+
+        public bool Update(GameTime gameTime)
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) { return true; }
+            else 
+            {
+                cube.Update(gameTime);
+                return false; 
+            }
         }
 
         public void Draw(GameTime gameTime, SpriteBatch sb)
         {
-            sb.Draw(spaceManText, new Vector2(36, 48), Color.White);
+            sb.Draw(spaceBounceText, new Vector2(48, 60), Color.White);
+
             sb.Draw(startText, new Vector2(104, 168), Color.Red);
+
+            /*
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (timer > 0.5f)
+            {
+                sb.Draw(startText, new Vector2(104, 168), Color.Red);
+                if (timer > 1f)
+                {
+                    timer -= 1f;
+                }
+            }
+            */
+
+            cube.Draw();
         }
 
     }
