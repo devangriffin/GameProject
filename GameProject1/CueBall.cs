@@ -24,6 +24,8 @@ namespace GameProject1
         public int Radius = 32;
         public BoundingCircle HitBox;
 
+        public const int SPEED = 800;
+
         /// <summary>
         /// Constructor for the cue ball
         /// </summary>
@@ -39,7 +41,7 @@ namespace GameProject1
 
             Velocity = new Vector2(1, 1);
             Velocity.Normalize();
-            Velocity *= 500;
+            Velocity *= SPEED;
 
             HitBox = new BoundingCircle(new Vector2(position.X, position.Y), Radius);
         }

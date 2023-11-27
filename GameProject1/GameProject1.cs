@@ -35,6 +35,10 @@ namespace GameProject1
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            graphics.PreferredBackBufferHeight = 960;
+            graphics.PreferredBackBufferWidth = 1280;
+
         }
 
         /// <summary>

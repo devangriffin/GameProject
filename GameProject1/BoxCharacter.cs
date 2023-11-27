@@ -18,6 +18,8 @@ namespace GameProject1
 
         public BoundingRectangle HitBox;
 
+        public const int SPEED = 6;
+
         public BoxCharacter()
         {
             HitBox = new BoundingRectangle(position, 96, 96);
@@ -39,12 +41,11 @@ namespace GameProject1
         public void Update(GameTime gameTime)
         {
             keyState = Keyboard.GetState();
-            int speed = 4;
 
-            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W)) { position += new Vector2(0, -speed); HitBox.Y += -speed; } // * (float)gameTime.ElapsedGameTime.TotalSeconds}
-            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S)) { position += new Vector2(0, speed); HitBox.Y += speed; }
-            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A)) { position += new Vector2(-speed, 0); HitBox.X += -speed; }
-            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D)) { position += new Vector2(speed, 0); HitBox.X += speed; }
+            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W)) { position += new Vector2(0, -SPEED); HitBox.Y += -SPEED; } // * (float)gameTime.ElapsedGameTime.TotalSeconds}
+            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S)) { position += new Vector2(0, SPEED); HitBox.Y += SPEED; }
+            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A)) { position += new Vector2(-SPEED, 0); HitBox.X += -SPEED; }
+            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D)) { position += new Vector2(SPEED, 0); HitBox.X += SPEED; }
         }
 
         /// <summary>

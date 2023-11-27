@@ -19,7 +19,7 @@ namespace GameProject1
     {
         private GraphicsDeviceManager graphics;
 
-        private Coin coin;
+        private List<Coin> coins;
         private CueBall cueBall;
         private bool Colliding = false;
         private bool CueColliding = false;
@@ -38,6 +38,8 @@ namespace GameProject1
         public float seconds = 0;
         public int minutes = 0;
 
+        private const int COINCOUNT = 3;
+
         private GameProject1 game;
 
         public GameplayScreen(GraphicsDeviceManager graphics, SpriteFont font)
@@ -49,7 +51,8 @@ namespace GameProject1
         public void Initialize(int endAmount, GameProject1 game)
         {
             boxMan = new BoxCharacter();
-            coin = new Coin();
+            coins = new List<Coin>();
+            for (int i = 0; i < COINCOUNT; i++) { coins.Add(new Coin()); }
             cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             this.endAmount = endAmount;
             this.game = game;
@@ -61,7 +64,7 @@ namespace GameProject1
         public void Load(ContentManager c)
         {
             boxMan.LoadContent(c);
-            coin.LoadContent(c);
+            foreach (Coin coin in coins) { coin.LoadContent(c); }
             cueBall.LoadContent(c);
             background = c.Load<Texture2D>("Space1");
             coinPickup = c.Load<SoundEffect>("coinPickup");
@@ -106,12 +109,15 @@ namespace GameProject1
                 CueColliding = false;
             }
 
-            if (cueBall.HitBox.Collides(coin.HitBox))
+            foreach (Coin coin in coins)
             {
-                coinPickup.Play();
-                firework.PlaceFirework(coin.Position);
-                coin.MoveCoin();
-                coinsCollected++;
+                if (cueBall.HitBox.Collides(coin.HitBox))
+                {
+                    coinPickup.Play();
+                    firework.PlaceFirework(coin.Position);
+                    coin.MoveCoin();
+                    coinsCollected++;
+                }
             }
         }
 
@@ -129,11 +135,11 @@ namespace GameProject1
             {
                 sb.Draw(background, new Vector2(0, 0), Color.White);
                 boxMan.Draw(gameTime, sb, Colliding);
-                coin.Draw(gameTime, sb);
+                foreach (Coin coin in coins) { coin.Draw(gameTime, sb); }
                 cueBall.Draw(gameTime, sb);
                 sb.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.Gold);
-                if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(0, 456), Color.Gold); }
-                else { sb.DrawString(font, "Time: " + minutes + ":" + (int)seconds, new Vector2(0, 456), Color.Gold); }
+                if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
+                else { sb.DrawString(font, "Time: " + minutes + ":" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
 
                 return true;
             }
