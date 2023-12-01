@@ -12,7 +12,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.Threading;
 using ParticleSystemExample;
-using GameProject1.Content;
 
 namespace GameProject1
 {
@@ -23,7 +22,7 @@ namespace GameProject1
         private List<Coin> coins;
         private List<Alien> aliens;
         private CueBall coinBall;
-        private CueBall alienBall;
+        // private CueBall alienBall;
         private BoxCharacter boxMan;
 
         private Texture2D background;
@@ -40,8 +39,10 @@ namespace GameProject1
         private int endAmount;
         private int CoinCount = 3;
         private int maxAlienCount = 20;
-        private int alienCount = 10;
+        private int alienCount = 1;
         private int level = 1;
+
+        private double addAlienTimer;
 
         public float seconds = 0;
         public int minutes = 0;       
@@ -60,9 +61,9 @@ namespace GameProject1
             coins = new List<Coin>();
             aliens = new List<Alien>();
             for (int i = 0; i < CoinCount; i++) { coins.Add(new Coin(graphics)); }
-            for (int i = 0; i < maxAlienCount; i++) { aliens.Add(new Alien(boxMan.Position)); }
+            for (int i = 0; i < maxAlienCount; i++) { aliens.Add(new Alien(boxMan.Position, graphics)); }
             coinBall = new CueBall(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, Color.White);
-            alienBall = new CueBall(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, Color.Red);
+            // alienBall = new CueBall(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, Color.Red);
 
             this.endAmount = endAmount;
             this.game = game;
@@ -82,25 +83,25 @@ namespace GameProject1
             foreach (Coin coin in coins) { coin.LoadContent(c); }
             foreach (Alien alien in aliens) { alien.LoadContent(c); }
             coinBall.LoadContent(c, bounce);
-            alienBall.LoadContent(c, bounce);
+            // alienBall.LoadContent(c, bounce);
 
-            music = c.Load<Song>("SpaceMusic");
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(music);
+            // music = c.Load<Song>("SpaceMusic");
+            // MediaPlayer.IsRepeating = true;
+            // MediaPlayer.Play(music);
         }
 
-        public void Update(GameTime gameTime)
+        public bool Update(GameTime gameTime)
         {
             boxMan.Update(gameTime);
 
             for (int i = 0; i < alienCount; i++)
             {
                 aliens[i].Update(boxMan.Position);
-                if (alienBall.HitBox.Collides(aliens[i].HitBox))
+                if (coinBall.HitBox.Collides(aliens[i].HitBox))
                 {
                     if (aliens[i].HitBox.IsColliding == false)
                     {
-                        Bounce(alienBall, aliens[i].HitBox);
+                        Bounce(coinBall, aliens[i].HitBox);
                         aliens[i].NewPosition(boxMan.Position);
                         alienSound.Play();
                     }
@@ -109,16 +110,13 @@ namespace GameProject1
                 }
                 else { aliens[i].HitBox.IsColliding = false; }
 
-                if (boxMan.HitBox.Collides(aliens[i].HitBox))
-                {
-                    ResetGamePlay();
-                }
+                if (boxMan.HitBox.Collides(aliens[i].HitBox)) { return true; }
             }
             
-            if (!GameOver) { coinBall.Update(gameTime); alienBall.Update(gameTime); }
+            if (!GameOver) { coinBall.Update(gameTime); /* alienBall.Update(gameTime); */ }
 
             SpaceManBallCollision(coinBall, boxMan.HitBox);
-            SpaceManBallCollision(alienBall, boxMan.HitBox);
+            //SpaceManBallCollision(alienBall, boxMan.HitBox);
 
             foreach (Coin coin in coins)
             {
@@ -130,6 +128,16 @@ namespace GameProject1
                     coinsCollected++;
                 }
             }
+
+            addAlienTimer += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (addAlienTimer > 10)
+            {
+                alienCount++;
+                addAlienTimer -= 10;
+            }
+
+            return false;
         }
 
         public bool Draw(GameTime gameTime, SpriteBatch sb)
@@ -151,7 +159,7 @@ namespace GameProject1
                 foreach (Coin coin in coins) { coin.Draw(gameTime, sb); }
                 for (int i = 0; i < alienCount; i++) { aliens[i].Draw(sb); } 
                 coinBall.Draw(gameTime, sb);
-                alienBall.Draw(gameTime, sb);
+                // alienBall.Draw(gameTime, sb);
 
                 sb.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.Gold);
                 if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
@@ -178,23 +186,30 @@ namespace GameProject1
             seconds = 0;
 
             boxMan.ResetPosition();
+            alienCount = 0;
             foreach (Alien alien in aliens) { alien.NewPosition(boxMan.Position); }
             foreach (Coin coin in coins) { }
         }
 
         private void Bounce(CueBall cueBall, BoundingRectangle squareHitBox)
         {
-            float DistanceToX = 0;
-            float DistanceToY = 0;
+            if (cueBall.IsBouncingX == false && cueBall.IsBouncingY == false)
+            {
+                float DistanceToX = 0;
+                float DistanceToY = 0;
 
-            // Decides which direction the ball goes after bouncing off the character
-            if (cueBall.HitBox.Center.X < squareHitBox.X) { DistanceToX = squareHitBox.X - cueBall.HitBox.Center.X; }
-            else if (cueBall.HitBox.Center.X > squareHitBox.X + squareHitBox.Width) { DistanceToX = cueBall.HitBox.Center.X - (squareHitBox.X + squareHitBox.Width); }
-            if (cueBall.HitBox.Center.Y < squareHitBox.Y) { DistanceToY = squareHitBox.Y - cueBall.HitBox.Center.Y; }
-            else if (cueBall.HitBox.Center.Y > squareHitBox.Y + squareHitBox.Height) { DistanceToY = cueBall.HitBox.Center.Y - (squareHitBox.Y + squareHitBox.Height); }
+                // Decides which direction the ball goes after bouncing off the character
+                if (cueBall.HitBox.Center.X < squareHitBox.X) { DistanceToX = squareHitBox.X - cueBall.HitBox.Center.X; }
+                else if (cueBall.HitBox.Center.X > squareHitBox.X + squareHitBox.Width) { DistanceToX = cueBall.HitBox.Center.X - (squareHitBox.X + squareHitBox.Width); }
+                if (cueBall.HitBox.Center.Y < squareHitBox.Y) { DistanceToY = squareHitBox.Y - cueBall.HitBox.Center.Y; }
+                else if (cueBall.HitBox.Center.Y > squareHitBox.Y + squareHitBox.Height) { DistanceToY = cueBall.HitBox.Center.Y - (squareHitBox.Y + squareHitBox.Height); }
 
-            if (DistanceToY > DistanceToX) { cueBall.Velocity.Y *= -1; }
-            else { cueBall.Velocity.X *= -1; }
+                if (DistanceToY > DistanceToX) { cueBall.Velocity.Y *= -1; }
+                else { cueBall.Velocity.X *= -1; }
+
+                //cueBall.IsBouncing = true;
+            }
+            else { /* cueBall.IsBouncing = false; */ }
         }
 
         private void SpaceManBallCollision(CueBall cueBall, BoundingRectangle boxManHitBox)

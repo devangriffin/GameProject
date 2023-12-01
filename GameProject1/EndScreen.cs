@@ -37,13 +37,13 @@ namespace GameProject1
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) { return true; }
 
-            sb.DrawString(font, "Press Space to Restart", new Vector2(200, 220), Color.Red);
+            sb.DrawString(font, "Press Space to Restart", new Vector2(380, 340), Color.Red);
 
             if (endSeconds < 10) { sb.DrawString(font, "Best Time - " + game.RecordMinutes + ":0" + game.RecordSeconds, new Vector2(0, 0), Color.White); }
             else { sb.DrawString(font, "Best Time - " + game.RecordMinutes + ":" + game.RecordSeconds, new Vector2(0, 0), Color.White); }
 
-            if (endSeconds < 10) { sb.DrawString(font, "Collected " + endAmount + " Coins in " + endMinutes + ":0" + endSeconds + "!", new Vector2(80, 140), Color.Gold, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
-            else { sb.DrawString(font, "Collected " + endAmount + " Coins in " + endMinutes + ":" + endSeconds + "!", new Vector2(80, 140), Color.Gold, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
+            if (endSeconds < 10) { sb.DrawString(font, "Collected " + endAmount + " Coins in " + endMinutes + ":0" + endSeconds + "!", new Vector2(240, 240), Color.Gold, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
+            else { sb.DrawString(font, "Collected " + endAmount + " Coins in " + endMinutes + ":" + endSeconds + "!", new Vector2(240, 240), Color.Gold, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0); }
 
             return false;
         }

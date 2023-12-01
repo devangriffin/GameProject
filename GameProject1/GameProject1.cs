@@ -23,7 +23,7 @@ namespace GameProject1
 
         private SpriteFont font;
 
-        public const int COINENDAMOUNT = 20;
+        public const int COINENDAMOUNT = 30;
 
         private Song music;
 
@@ -53,7 +53,7 @@ namespace GameProject1
             endScreen = new EndScreen(font, COINENDAMOUNT, this);
 
             gameplayScreen.Initialize(COINENDAMOUNT, this);
-            menuScreen.Initialize(this);
+            menuScreen.Initialize(this, font);
 
             base.Initialize();
         }
@@ -64,9 +64,9 @@ namespace GameProject1
 
             menuScreen.Load(Content);
 
-            //music = Content.Load<Song>("SpaceMusic");
-            //MediaPlayer.IsRepeating = true;
-            //MediaPlayer.Play(music);
+            music = Content.Load<Song>("SpaceMusic");
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(music);
         }
 
         /// <summary>
@@ -80,15 +80,18 @@ namespace GameProject1
 
             switch (currentScreen)
             {
-                case CurrentScreen.GamePlay:
-                    gameplayScreen.Update(gameTime);
-                    break;
                 case CurrentScreen.Menu:
-                    if (menuScreen.Update(gameTime)) 
-                    { 
-                        currentScreen = CurrentScreen.GamePlay; 
-                        gameplayScreen.Load(Content); 
+                    if (menuScreen.Update(gameTime))
+                    {
+                        currentScreen = CurrentScreen.GamePlay;
+                        gameplayScreen.ResetGamePlay();
+                        gameplayScreen.Load(Content);
                     }
+                    break;
+                case CurrentScreen.GamePlay:
+                    if (gameplayScreen.Update(gameTime)) { currentScreen = CurrentScreen.Menu; }
+                    break;             
+                case CurrentScreen.EndScreen:
                     break;
             }
 

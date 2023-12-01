@@ -29,6 +29,9 @@ namespace GameProject1
 
         public const int SPEED = 800;
 
+        public bool IsBouncingX = false;
+        public bool IsBouncingY = false;
+
         /// <summary>
         /// Constructor for the cue ball
         /// </summary>
@@ -70,9 +73,26 @@ namespace GameProject1
             position += Velocity * t;
             HitBox.Center += Velocity * t;
 
-            if (position.X < 32 || position.X > graphicsWidth - 32) { Velocity.X *= -1; sound.Play(); }
-            if (position.Y < 32 || position.Y > graphicsHeight - 32) { Velocity.Y *= -1; sound.Play(); }
-                   
+            if (position.X < 32 || position.X > graphicsWidth - 32)
+            {
+                if (IsBouncingX == false)
+                {
+                    Velocity.X *= -1;
+                    sound.Play();
+                }
+                IsBouncingX = true;
+            }
+            else { IsBouncingX = false; }
+            if (position.Y < 32 || position.Y > graphicsHeight - 32) 
+            {
+                if (IsBouncingY == false)
+                {
+                    Velocity.Y *= -1;
+                    sound.Play();
+                }
+                IsBouncingY = true;
+            }  
+            else { IsBouncingY = false; }
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
