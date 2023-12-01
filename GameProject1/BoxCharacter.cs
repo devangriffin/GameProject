@@ -53,11 +53,11 @@ namespace GameProject1
         /// </summary>
         /// <param name="gameTime">The game time</param>
         /// <param name="spriteBatch">The sprite batch</param>
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, bool Colliding)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            Color color = Color.White;
-            if (Colliding) { color = Color.Red; }
-            spriteBatch.Draw(texture, Position, color);
+            spriteBatch.Draw(texture, Position, Color.White);
         }
+
+        public void ResetPosition() { Position = Vector2.Zero; HitBox.X = 0; HitBox.Y = 0; }
     }
 }

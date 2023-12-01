@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Audio;
 
 namespace GameProject1
 {
@@ -19,6 +20,8 @@ namespace GameProject1
         private double animationTimer;
         private int graphicsWidth;
         private int graphicsHeight;
+        private SoundEffect sound;
+        private Color ballColor;
 
         public Vector2 Velocity;
         public int Radius = 32;
@@ -31,10 +34,11 @@ namespace GameProject1
         /// </summary>
         /// <param name="width">The width of the screen</param>
         /// <param name="height">The height of the screen</param>
-        public CueBall(int width, int height)
+        public CueBall(int width, int height, Color color)
         {
             graphicsWidth = width;
             graphicsHeight = height;
+            ballColor = color;
 
             Random rand = new Random();
             position = new Vector2(300, 300);
@@ -50,16 +54,17 @@ namespace GameProject1
         /// Loads the texture
         /// </summary>
         /// <param name="cm">The content manager</param>
-        public void LoadContent(ContentManager cm)
+        public void LoadContent(ContentManager cm, SoundEffect bounce)
         {
             texture = cm.Load<Texture2D>("Cue");
+            sound = bounce;
         }
 
         /// <summary>
         /// Updates the cue ball
         /// </summary>
         /// <param name="gameTime">The game time</param>
-        public void Update(GameTime gameTime, SoundEffect sound)
+        public void Update(GameTime gameTime)
         {
             float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
             position += Velocity * t;
@@ -79,7 +84,7 @@ namespace GameProject1
                 rotation += 0.25f;
                 animationTimer -= 0.05;
             }
-            spriteBatch.Draw(texture, position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, position, null, ballColor, rotation, origin, 1, SpriteEffects.None, 0);
         }
 
         /*

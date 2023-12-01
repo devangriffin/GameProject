@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:Alien.png
 
+#begin AlienSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:AlienSound.wav
+
 #begin Bangers.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -37,18 +43,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:bounce.wav
-
-#begin BoxMan.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:BoxMan.png
 
 #begin circle.png
 /importer:TextureImporter
@@ -128,18 +122,6 @@
 /processorParam:TextureFormat=Color
 /build:SpaceMan2.png
 
-#begin SpaceManText.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:SpaceManText.png
-
 #begin SpaceMusic.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
@@ -157,16 +139,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:StartText.png
-
-#begin Yellow.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Yellow.png
 

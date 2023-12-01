@@ -18,7 +18,7 @@ namespace GameProject1.Content
         private Random numGenerator;
 
         public BoundingRectangle HitBox;
-        public float Speed = 1f;
+        public float Speed = 0.5f;
 
         public Alien(Vector2 playerPosition)
         {
@@ -47,7 +47,6 @@ namespace GameProject1.Content
         
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(hitBoxTexture, HitBox.Position, Color.White);
             spriteBatch.Draw(texture, position, Color.White);
         }
 

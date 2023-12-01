@@ -45,9 +45,9 @@ namespace GameProject1
 
         public void Draw(GameTime gameTime, SpriteBatch sb)
         {
-            sb.Draw(spaceBounceText, new Vector2(48, 60), Color.White);
+            sb.Draw(spaceBounceText, new Vector2(280, 100), Color.White);
 
-            sb.Draw(startText, new Vector2(104, 168), Color.Red);
+            sb.Draw(startText, new Vector2(320, 240), Color.Red);
 
             /*
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;

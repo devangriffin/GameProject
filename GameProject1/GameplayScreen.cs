@@ -22,23 +22,25 @@ namespace GameProject1
 
         private List<Coin> coins;
         private List<Alien> aliens;
-        private CueBall cueBall;
+        private CueBall coinBall;
+        private CueBall alienBall;
         private BoxCharacter boxMan;
 
         private Texture2D background;
         private SpriteFont font;
         private SoundEffect coinPickup;
         private SoundEffect bounce;
+        private SoundEffect alienSound;
         private Firework firework;
+        private Song music;
 
-        private bool Colliding = false;
-        private bool CueColliding = false;
         private bool GameOver = false;
 
         private int coinsCollected = 0;
         private int endAmount;
         private int CoinCount = 3;
-        private int alienCount = 4;
+        private int maxAlienCount = 20;
+        private int alienCount = 10;
         private int level = 1;
 
         public float seconds = 0;
@@ -57,9 +59,11 @@ namespace GameProject1
             boxMan = new BoxCharacter();
             coins = new List<Coin>();
             aliens = new List<Alien>();
-            for (int i = 0; i < CoinCount; i++) { coins.Add(new Coin()); }
-            for (int i = 0; i < alienCount; i++) { aliens.Add(new Alien(boxMan.Position)); }
-            cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+            for (int i = 0; i < CoinCount; i++) { coins.Add(new Coin(graphics)); }
+            for (int i = 0; i < maxAlienCount; i++) { aliens.Add(new Alien(boxMan.Position)); }
+            coinBall = new CueBall(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, Color.White);
+            alienBall = new CueBall(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, Color.Red);
+
             this.endAmount = endAmount;
             this.game = game;
 
@@ -69,83 +73,60 @@ namespace GameProject1
 
         public void Load(ContentManager c)
         {
-            boxMan.LoadContent(c);
-            foreach (Coin coin in coins) { coin.LoadContent(c); }
-            foreach (Alien alien in aliens) { alien.LoadContent(c); }
-            cueBall.LoadContent(c);
-
             background = c.Load<Texture2D>("Space1");
             coinPickup = c.Load<SoundEffect>("coinPickup");
             bounce = c.Load<SoundEffect>("bounce");
-            // music = c.Load<Song>("SpaceMusic");
-            // MediaPlayer.IsRepeating = true;
-            // MediaPlayer.Play(music);
+            alienSound = c.Load<SoundEffect>("AlienSound");
+
+            boxMan.LoadContent(c);
+            foreach (Coin coin in coins) { coin.LoadContent(c); }
+            foreach (Alien alien in aliens) { alien.LoadContent(c); }
+            coinBall.LoadContent(c, bounce);
+            alienBall.LoadContent(c, bounce);
+
+            music = c.Load<Song>("SpaceMusic");
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(music);
         }
 
         public void Update(GameTime gameTime)
         {
             boxMan.Update(gameTime);
 
-            foreach (Alien alien in aliens)
+            for (int i = 0; i < alienCount; i++)
             {
-                alien.Update(boxMan.Position);
-                if (cueBall.HitBox.Collides(alien.HitBox))
+                aliens[i].Update(boxMan.Position);
+                if (alienBall.HitBox.Collides(aliens[i].HitBox))
                 {
-                    if (alien.HitBox.IsColliding == false)
+                    if (aliens[i].HitBox.IsColliding == false)
                     {
-                        Bounce(cueBall.HitBox, boxMan.HitBox);
-                        alien.NewPosition(boxMan.Position);
+                        Bounce(alienBall, aliens[i].HitBox);
+                        aliens[i].NewPosition(boxMan.Position);
+                        alienSound.Play();
                     }
 
-                    alien.HitBox.IsColliding = true;
+                    aliens[i].HitBox.IsColliding = true;
                 }
-                else { alien.HitBox.IsColliding = false; }
+                else { aliens[i].HitBox.IsColliding = false; }
+
+                if (boxMan.HitBox.Collides(aliens[i].HitBox))
+                {
+                    ResetGamePlay();
+                }
             }
             
+            if (!GameOver) { coinBall.Update(gameTime); alienBall.Update(gameTime); }
 
-            if (!GameOver) { cueBall.Update(gameTime, bounce); }        
-
-            if (cueBall.HitBox.Collides(boxMan.HitBox))
-            {
-                Colliding = true;
-
-                // Makes sure it doesn't bounce multiple times while colliding
-                if (CueColliding == false)
-                {
-                    bounce.Play();
-
-                    /*
-                    float DistanceToX = 0;
-                    float DistanceToY = 0;
-
-                    // Decides which direction the ball goes after bouncing off the character
-                    if (cueBall.HitBox.Center.X < boxMan.HitBox.X) { DistanceToX = boxMan.HitBox.X - cueBall.HitBox.Center.X; }
-                    else if (cueBall.HitBox.Center.X > boxMan.HitBox.X + boxMan.HitBox.Width) { DistanceToX = cueBall.HitBox.Center.X - (boxMan.HitBox.X + boxMan.HitBox.Width); }
-                    if (cueBall.HitBox.Center.Y < boxMan.HitBox.Y) { DistanceToY = boxMan.HitBox.Y - cueBall.HitBox.Center.Y; }
-                    else if (cueBall.HitBox.Center.Y > boxMan.HitBox.Y + boxMan.HitBox.Height) { DistanceToY = cueBall.HitBox.Center.Y - (boxMan.HitBox.Y + boxMan.HitBox.Height); }
-
-                    if (DistanceToY > DistanceToX) { cueBall.Velocity.Y *= -1; }
-                    else { cueBall.Velocity.X *= -1; }
-                    */
-
-                    Bounce(cueBall.HitBox, boxMan.HitBox);
-
-                    CueColliding = true;
-                }
-            }
-            else
-            {
-                Colliding = false;
-                CueColliding = false;
-            }
+            SpaceManBallCollision(coinBall, boxMan.HitBox);
+            SpaceManBallCollision(alienBall, boxMan.HitBox);
 
             foreach (Coin coin in coins)
             {
-                if (cueBall.HitBox.Collides(coin.HitBox))
+                if (coinBall.HitBox.Collides(coin.HitBox))
                 {
                     coinPickup.Play();
                     firework.PlaceFirework(coin.Position);
-                    coin.MoveCoin();
+                    coin.NewCoinPosition();
                     coinsCollected++;
                 }
             }
@@ -165,10 +146,12 @@ namespace GameProject1
             {
                 //sb.Draw(background, new Rectangle(300, 300, 400, 300), new Rectangle(0, 0, 300, 300), Color.White);
                 sb.Draw(background, new Vector2(0, 0), Color.White);
-                boxMan.Draw(gameTime, sb, Colliding);
+                boxMan.Draw(gameTime, sb);
+
                 foreach (Coin coin in coins) { coin.Draw(gameTime, sb); }
-                foreach (Alien alien in aliens) { alien.Draw(sb); } 
-                cueBall.Draw(gameTime, sb);
+                for (int i = 0; i < alienCount; i++) { aliens[i].Draw(sb); } 
+                coinBall.Draw(gameTime, sb);
+                alienBall.Draw(gameTime, sb);
 
                 sb.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.Gold);
                 if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
@@ -193,21 +176,48 @@ namespace GameProject1
             coinsCollected = 0;
             minutes = 0;
             seconds = 0;
+
+            boxMan.ResetPosition();
+            foreach (Alien alien in aliens) { alien.NewPosition(boxMan.Position); }
+            foreach (Coin coin in coins) { }
         }
 
-        private void Bounce(BoundingCircle cueBallHitBox, BoundingRectangle squareHitBox)
+        private void Bounce(CueBall cueBall, BoundingRectangle squareHitBox)
         {
             float DistanceToX = 0;
             float DistanceToY = 0;
 
             // Decides which direction the ball goes after bouncing off the character
-            if (cueBallHitBox.Center.X < squareHitBox.X) { DistanceToX = squareHitBox.X - cueBallHitBox.Center.X; }
-            else if (cueBallHitBox.Center.X > squareHitBox.X + squareHitBox.Width) { DistanceToX = cueBallHitBox.Center.X - (squareHitBox.X + squareHitBox.Width); }
-            if (cueBallHitBox.Center.Y < squareHitBox.Y) { DistanceToY = squareHitBox.Y - cueBallHitBox.Center.Y; }
-            else if (cueBallHitBox.Center.Y > squareHitBox.Y + squareHitBox.Height) { DistanceToY = cueBallHitBox.Center.Y - (squareHitBox.Y + squareHitBox.Height); }
+            if (cueBall.HitBox.Center.X < squareHitBox.X) { DistanceToX = squareHitBox.X - cueBall.HitBox.Center.X; }
+            else if (cueBall.HitBox.Center.X > squareHitBox.X + squareHitBox.Width) { DistanceToX = cueBall.HitBox.Center.X - (squareHitBox.X + squareHitBox.Width); }
+            if (cueBall.HitBox.Center.Y < squareHitBox.Y) { DistanceToY = squareHitBox.Y - cueBall.HitBox.Center.Y; }
+            else if (cueBall.HitBox.Center.Y > squareHitBox.Y + squareHitBox.Height) { DistanceToY = cueBall.HitBox.Center.Y - (squareHitBox.Y + squareHitBox.Height); }
 
             if (DistanceToY > DistanceToX) { cueBall.Velocity.Y *= -1; }
             else { cueBall.Velocity.X *= -1; }
+        }
+
+        private void SpaceManBallCollision(CueBall cueBall, BoundingRectangle boxManHitBox)
+        {
+            if (cueBall.HitBox.Collides(boxManHitBox))
+            {
+                boxManHitBox.IsColliding = true;
+
+                // Makes sure it doesn't bounce multiple times while colliding
+                if (cueBall.HitBox.IsColliding == false)
+                {
+                    bounce.Play();
+
+                    Bounce(cueBall, boxMan.HitBox);
+
+                    cueBall.HitBox.IsColliding = true;
+                }
+            }
+            else
+            {
+                boxManHitBox.IsColliding = false;
+                cueBall.HitBox.IsColliding = false;
+            }
         }
     }
 }

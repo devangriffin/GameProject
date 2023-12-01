@@ -64,8 +64,8 @@ namespace GameProject1
 
             menuScreen.Load(Content);
 
-            music = Content.Load<Song>("SpaceMusic");
-            MediaPlayer.IsRepeating = true;
+            //music = Content.Load<Song>("SpaceMusic");
+            //MediaPlayer.IsRepeating = true;
             //MediaPlayer.Play(music);
         }
 

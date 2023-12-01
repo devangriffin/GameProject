@@ -47,5 +47,10 @@ namespace GameProject1
             Width = width;
             Height = height;
         }
+
+        public bool Collides(BoundingRectangle other)
+        {
+            return !(Right < other.Left || Left > other.Right || Top > other.Bottom || Bottom < other.Top);
+        }
     }
 }

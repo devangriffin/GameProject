@@ -11,6 +11,8 @@ namespace GameProject1
 {
     public class Coin
     {
+        private GraphicsDeviceManager graphics;
+
         private Texture2D texture;
         private double animationTimer;
         private short animationFrame = 1;
@@ -25,11 +27,11 @@ namespace GameProject1
         /// <summary>
         /// Constructor for a coin
         /// </summary>
-        public Coin()
+        public Coin(GraphicsDeviceManager g)
         {
-            Position = new Vector2(random.NextInt64(800 - 32), random.NextInt64(480 - 32));
+            graphics = g;
 
-            HitBox = new BoundingCircle(new Vector2(Position.X + RADIUS, Position.Y + RADIUS), RADIUS);
+            NewCoinPosition();
         }
 
         /// <summary>
@@ -92,9 +94,9 @@ namespace GameProject1
             spriteBatch.Draw(texture, Position, rect, Color.White);
         }
 
-        public void MoveCoin()
+        public void NewCoinPosition()
         {
-            Position = new Vector2(random.NextInt64(800 - 32), random.NextInt64(480 - 32));
+            Position = new Vector2(random.NextInt64(graphics.PreferredBackBufferWidth - 32), random.NextInt64(graphics.PreferredBackBufferHeight - 32));
             HitBox = new BoundingCircle(new Vector2(Position.X + RADIUS, Position.Y + RADIUS), RADIUS);
         }
     }
