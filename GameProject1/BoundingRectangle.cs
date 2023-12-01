@@ -25,6 +25,13 @@ namespace GameProject1
 
         public float Bottom => Y + Height;
 
+        public bool IsColliding;
+
+        public Vector2 Position 
+        { 
+            get { return new Vector2(X, Y); } 
+        }
+
         public BoundingRectangle(float x, float y, float width, float height)
         {
             X = x;

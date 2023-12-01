@@ -14,15 +14,15 @@ namespace GameProject1
     {
         private KeyboardState keyState;
         private Texture2D texture;
-        private Vector2 position = new Vector2(0, 0);
-
+        
+        public Vector2 Position { get; private set; }
         public BoundingRectangle HitBox;
-
-        public const int SPEED = 6;
+        public float CharacterSpeed = 6f;
 
         public BoxCharacter()
         {
-            HitBox = new BoundingRectangle(position, 96, 96);
+            Position = new Vector2(0, 0);
+            HitBox = new BoundingRectangle(Position, 96, 96);           
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace GameProject1
         /// <param name="content">The content manager</param>
         public void LoadContent(ContentManager content)
         {
-            texture = content.Load<Texture2D>("BoxMan");
+            texture = content.Load<Texture2D>("SpaceMan2");
         }
 
         /// <summary>
@@ -42,10 +42,10 @@ namespace GameProject1
         {
             keyState = Keyboard.GetState();
 
-            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W)) { position += new Vector2(0, -SPEED); HitBox.Y += -SPEED; } // * (float)gameTime.ElapsedGameTime.TotalSeconds}
-            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S)) { position += new Vector2(0, SPEED); HitBox.Y += SPEED; }
-            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A)) { position += new Vector2(-SPEED, 0); HitBox.X += -SPEED; }
-            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D)) { position += new Vector2(SPEED, 0); HitBox.X += SPEED; }
+            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W)) { Position += new Vector2(0, -CharacterSpeed); HitBox.Y += -CharacterSpeed; } // * (float)gameTime.ElapsedGameTime.TotalSeconds}
+            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S)) { Position += new Vector2(0, CharacterSpeed); HitBox.Y += CharacterSpeed; }
+            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A)) { Position += new Vector2(-CharacterSpeed, 0); HitBox.X += -CharacterSpeed; }
+            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D)) { Position += new Vector2(CharacterSpeed, 0); HitBox.X += CharacterSpeed; }
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace GameProject1
         {
             Color color = Color.White;
             if (Colliding) { color = Color.Red; }
-            spriteBatch.Draw(texture, position, color);
+            spriteBatch.Draw(texture, Position, color);
         }
     }
 }

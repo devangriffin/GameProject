@@ -66,7 +66,7 @@ namespace GameProject1
 
             music = Content.Load<Song>("SpaceMusic");
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(music);
+            //MediaPlayer.Play(music);
         }
 
         /// <summary>

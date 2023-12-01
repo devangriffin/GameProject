@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.Threading;
 using ParticleSystemExample;
+using GameProject1.Content;
 
 namespace GameProject1
 {
@@ -20,25 +21,28 @@ namespace GameProject1
         private GraphicsDeviceManager graphics;
 
         private List<Coin> coins;
+        private List<Alien> aliens;
         private CueBall cueBall;
+        private BoxCharacter boxMan;
+
+        private Texture2D background;
+        private SpriteFont font;
+        private SoundEffect coinPickup;
+        private SoundEffect bounce;
+        private Firework firework;
+
         private bool Colliding = false;
         private bool CueColliding = false;
         private bool GameOver = false;
-        private Texture2D background;
-        private SpriteFont font;
+
         private int coinsCollected = 0;
         private int endAmount;
-        private BoxCharacter boxMan;
-
-        private SoundEffect coinPickup;
-        private SoundEffect bounce;
-
-        private Firework firework;
+        private int CoinCount = 3;
+        private int alienCount = 4;
+        private int level = 1;
 
         public float seconds = 0;
-        public int minutes = 0;
-
-        private const int COINCOUNT = 3;
+        public int minutes = 0;       
 
         private GameProject1 game;
 
@@ -52,7 +56,9 @@ namespace GameProject1
         {
             boxMan = new BoxCharacter();
             coins = new List<Coin>();
-            for (int i = 0; i < COINCOUNT; i++) { coins.Add(new Coin()); }
+            aliens = new List<Alien>();
+            for (int i = 0; i < CoinCount; i++) { coins.Add(new Coin()); }
+            for (int i = 0; i < alienCount; i++) { aliens.Add(new Alien(boxMan.Position)); }
             cueBall = new CueBall(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
             this.endAmount = endAmount;
             this.game = game;
@@ -65,7 +71,9 @@ namespace GameProject1
         {
             boxMan.LoadContent(c);
             foreach (Coin coin in coins) { coin.LoadContent(c); }
+            foreach (Alien alien in aliens) { alien.LoadContent(c); }
             cueBall.LoadContent(c);
+
             background = c.Load<Texture2D>("Space1");
             coinPickup = c.Load<SoundEffect>("coinPickup");
             bounce = c.Load<SoundEffect>("bounce");
@@ -77,7 +85,25 @@ namespace GameProject1
         public void Update(GameTime gameTime)
         {
             boxMan.Update(gameTime);
-            if (!GameOver) { cueBall.Update(gameTime, bounce); }
+
+            foreach (Alien alien in aliens)
+            {
+                alien.Update(boxMan.Position);
+                if (cueBall.HitBox.Collides(alien.HitBox))
+                {
+                    if (alien.HitBox.IsColliding == false)
+                    {
+                        Bounce(cueBall.HitBox, boxMan.HitBox);
+                        alien.NewPosition(boxMan.Position);
+                    }
+
+                    alien.HitBox.IsColliding = true;
+                }
+                else { alien.HitBox.IsColliding = false; }
+            }
+            
+
+            if (!GameOver) { cueBall.Update(gameTime, bounce); }        
 
             if (cueBall.HitBox.Collides(boxMan.HitBox))
             {
@@ -88,6 +114,7 @@ namespace GameProject1
                 {
                     bounce.Play();
 
+                    /*
                     float DistanceToX = 0;
                     float DistanceToY = 0;
 
@@ -99,6 +126,9 @@ namespace GameProject1
 
                     if (DistanceToY > DistanceToX) { cueBall.Velocity.Y *= -1; }
                     else { cueBall.Velocity.X *= -1; }
+                    */
+
+                    Bounce(cueBall.HitBox, boxMan.HitBox);
 
                     CueColliding = true;
                 }
@@ -133,13 +163,17 @@ namespace GameProject1
             
             if (coinsCollected < endAmount)
             {
+                //sb.Draw(background, new Rectangle(300, 300, 400, 300), new Rectangle(0, 0, 300, 300), Color.White);
                 sb.Draw(background, new Vector2(0, 0), Color.White);
                 boxMan.Draw(gameTime, sb, Colliding);
                 foreach (Coin coin in coins) { coin.Draw(gameTime, sb); }
+                foreach (Alien alien in aliens) { alien.Draw(sb); } 
                 cueBall.Draw(gameTime, sb);
+
                 sb.DrawString(font, "Coins Collected: " + coinsCollected, new Vector2(0, 0), Color.Gold);
                 if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
                 else { sb.DrawString(font, "Time: " + minutes + ":" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
+                sb.DrawString(font, "Level " + level, new Vector2(graphics.PreferredBackBufferWidth - 60, 0), Color.Gold);
 
                 return true;
             }
@@ -159,6 +193,21 @@ namespace GameProject1
             coinsCollected = 0;
             minutes = 0;
             seconds = 0;
+        }
+
+        private void Bounce(BoundingCircle cueBallHitBox, BoundingRectangle squareHitBox)
+        {
+            float DistanceToX = 0;
+            float DistanceToY = 0;
+
+            // Decides which direction the ball goes after bouncing off the character
+            if (cueBallHitBox.Center.X < squareHitBox.X) { DistanceToX = squareHitBox.X - cueBallHitBox.Center.X; }
+            else if (cueBallHitBox.Center.X > squareHitBox.X + squareHitBox.Width) { DistanceToX = cueBallHitBox.Center.X - (squareHitBox.X + squareHitBox.Width); }
+            if (cueBallHitBox.Center.Y < squareHitBox.Y) { DistanceToY = squareHitBox.Y - cueBallHitBox.Center.Y; }
+            else if (cueBallHitBox.Center.Y > squareHitBox.Y + squareHitBox.Height) { DistanceToY = cueBallHitBox.Center.Y - (squareHitBox.Y + squareHitBox.Height); }
+
+            if (DistanceToY > DistanceToX) { cueBall.Velocity.Y *= -1; }
+            else { cueBall.Velocity.X *= -1; }
         }
     }
 }
