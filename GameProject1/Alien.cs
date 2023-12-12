@@ -117,7 +117,7 @@ namespace GameProject1
                 else
                 {
                     newPosition.X = windowWidth + alienWidth;
-                    newPosition.Y = numGenerator.Next(-alienWidth, windowHeight / 2);
+                    newPosition.Y = numGenerator.Next(-alienHeight, windowHeight / 2);
                 }
             }
             // Player is in the Bottom Right - Puts Alien in the Top Left Border

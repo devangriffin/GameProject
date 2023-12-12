@@ -19,8 +19,6 @@ namespace GameProject1.Screens
         private Cube cube;
         private SpriteFont font;
 
-        float timer = 0;
-
         public MenuScreen() { }
 
         public void Initialize(Game game, SpriteFont sfont)
@@ -51,7 +49,10 @@ namespace GameProject1.Screens
 
             sb.Draw(startText, new Vector2(320, 240), Color.Red);
 
-            sb.DrawString(font, "Collect " + GameProject1.COINENDAMOUNT + " Coins To Win!", new Vector2(520, 340), Color.Gold);
+            sb.DrawString(font, "Press H for 'How To Play'", new Vector2(500, 340), Color.Gold);
+
+            sb.DrawString(font, "Made By: Devan Griffin", new Vector2(0, 930), Color.Gold);
+            // sb.DrawString(font, "Collect " + GameProject1.COINENDAMOUNT + " Coins To Win!", new Vector2(520, 340), Color.Gold);
             /*
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (timer > 0.5f)

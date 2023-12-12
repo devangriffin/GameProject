@@ -10,7 +10,8 @@ namespace GameProject1.Enums
     {
         Menu,
         GamePlay,
-        EndScreen
+        EndScreen,
+        InfoScreen
     }
 
     public enum GameMode

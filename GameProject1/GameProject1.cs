@@ -23,6 +23,7 @@ namespace GameProject1
         private GameplayScreen gameplayScreen;
         private MenuScreen menuScreen;
         private EndScreen endScreen;
+        private InfoScreen infoScreen;
 
         private SpriteFont font;
 
@@ -33,6 +34,9 @@ namespace GameProject1
 
         public int RecordSeconds = -1;
         public int RecordMinutes = -1;
+
+        KeyboardState keyState;
+        KeyboardState oldKeyState;
 
         public GameProject1()
         {
@@ -54,9 +58,12 @@ namespace GameProject1
             gameplayScreen = new GameplayScreen(graphics, font);
             menuScreen = new MenuScreen();
             endScreen = new EndScreen(font, COINENDAMOUNT, this);
+            infoScreen = new InfoScreen(font);
 
             gameplayScreen.Initialize(COINENDAMOUNT, this);
             menuScreen.Initialize(this, font);
+
+            keyState = Keyboard.GetState();
 
             base.Initialize();
         }
@@ -81,6 +88,8 @@ namespace GameProject1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            CheckForH();
+
             switch (currentScreen)
             {
                 case CurrentScreen.Menu:
@@ -97,6 +106,8 @@ namespace GameProject1
                     break;             
                 case CurrentScreen.EndScreen:
                     MediaPlayer.Stop();
+                    break;
+                default:
                     break;
             }
 
@@ -125,11 +136,26 @@ namespace GameProject1
                 case CurrentScreen.EndScreen:
                     if (endScreen.Draw(gameTime, spriteBatch)) { gameplayScreen.ResetGamePlay(); currentScreen = CurrentScreen.Menu; }
                     break;
+                case CurrentScreen.InfoScreen:
+                    infoScreen.Draw(spriteBatch);
+                    break;
             }
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void CheckForH()
+        {
+            oldKeyState = keyState;
+            keyState = Keyboard.GetState();
+
+            if (keyState.IsKeyDown(Keys.H) && oldKeyState.IsKeyUp(Keys.H))
+            {
+                if (currentScreen == CurrentScreen.Menu) { currentScreen = CurrentScreen.InfoScreen; }
+                else if (currentScreen == CurrentScreen.InfoScreen) { currentScreen = CurrentScreen.Menu; }
+            }
         }
     }
 }
