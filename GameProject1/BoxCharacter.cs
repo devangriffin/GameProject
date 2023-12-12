@@ -14,13 +14,15 @@ namespace GameProject1
     {
         private KeyboardState keyState;
         private Texture2D texture;
+        private GraphicsDeviceManager graphics;
         
         public Vector2 Position { get; private set; }
         public BoundingRectangle HitBox;
         public float CharacterSpeed = 6f;
 
-        public BoxCharacter()
+        public BoxCharacter(GraphicsDeviceManager graphics)
         {
+            this.graphics = graphics;
             Position = new Vector2(0, 0);
             HitBox = new BoundingRectangle(Position, 96, 96);           
         }
@@ -42,10 +44,22 @@ namespace GameProject1
         {
             keyState = Keyboard.GetState();
 
-            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W)) { Position += new Vector2(0, -CharacterSpeed); HitBox.Y += -CharacterSpeed; } // * (float)gameTime.ElapsedGameTime.TotalSeconds}
-            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S)) { Position += new Vector2(0, CharacterSpeed); HitBox.Y += CharacterSpeed; }
-            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A)) { Position += new Vector2(-CharacterSpeed, 0); HitBox.X += -CharacterSpeed; }
-            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D)) { Position += new Vector2(CharacterSpeed, 0); HitBox.X += CharacterSpeed; }
+            if (keyState.IsKeyDown(Keys.W)) 
+            {
+                if (Position.Y > -48) { Position += new Vector2(0, -CharacterSpeed); HitBox.Y += -CharacterSpeed; }
+            } // * (float)gameTime.ElapsedGameTime.TotalSeconds}
+            if (keyState.IsKeyDown(Keys.S)) 
+            {
+                if (Position.Y < graphics.PreferredBackBufferHeight - 48) { Position += new Vector2(0, CharacterSpeed); HitBox.Y += CharacterSpeed; }
+            }
+            if (keyState.IsKeyDown(Keys.A))
+            {
+                if (Position.X > -48) { Position += new Vector2(-CharacterSpeed, 0); HitBox.X += -CharacterSpeed; }
+            }
+            if (keyState.IsKeyDown(Keys.D))
+            {
+                if (Position.X < graphics.PreferredBackBufferWidth - 48) { Position += new Vector2(CharacterSpeed, 0); HitBox.X += CharacterSpeed; }
+            }
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GameProject1
+namespace GameProject1.Screens
 {
     public class MenuScreen
     {
@@ -38,10 +38,10 @@ namespace GameProject1
         public bool Update(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) { return true; }
-            else 
+            else
             {
                 cube.Update(gameTime);
-                return false; 
+                return false;
             }
         }
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 
 namespace GameProject1
 {
@@ -27,7 +28,7 @@ namespace GameProject1
         public int Radius = 32;
         public BoundingCircle HitBox;
 
-        public const int SPEED = 800;
+        public int Speed = 800;
 
         public bool IsBouncingX = false;
         public bool IsBouncingY = false;
@@ -43,12 +44,11 @@ namespace GameProject1
             graphicsHeight = height;
             ballColor = color;
 
-            Random rand = new Random();
             position = new Vector2(300, 300);
 
             Velocity = new Vector2(1, 1);
             Velocity.Normalize();
-            Velocity *= SPEED;
+            Velocity *= Speed;
 
             HitBox = new BoundingCircle(new Vector2(position.X, position.Y), Radius);
         }
@@ -59,7 +59,7 @@ namespace GameProject1
         /// <param name="cm">The content manager</param>
         public void LoadContent(ContentManager cm, SoundEffect bounce)
         {
-            texture = cm.Load<Texture2D>("Cue");
+            texture = cm.Load<Texture2D>("CueBall2");
             sound = bounce;
         }
 

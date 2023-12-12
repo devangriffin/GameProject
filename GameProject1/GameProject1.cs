@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GameProject1.Enums;
+using GameProject1.Screens;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,6 +18,7 @@ namespace GameProject1
         private SpriteBatch spriteBatch;
 
         private CurrentScreen currentScreen = CurrentScreen.Menu;
+        // public GameMode GameMode = GameMode.Survival;
 
         private GameplayScreen gameplayScreen;
         private MenuScreen menuScreen;
@@ -23,7 +26,8 @@ namespace GameProject1
 
         private SpriteFont font;
 
-        public const int COINENDAMOUNT = 30;
+        public const int COINENDAMOUNT = 10;
+        public int CoinsCollected = 0;
 
         private Song music;
 
@@ -38,7 +42,6 @@ namespace GameProject1
 
             graphics.PreferredBackBufferHeight = 960;
             graphics.PreferredBackBufferWidth = 1280;
-
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace GameProject1
 
             music = Content.Load<Song>("SpaceMusic");
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(music);
+            // MediaPlayer.Play(music);
         }
 
         /// <summary>
@@ -83,15 +86,17 @@ namespace GameProject1
                 case CurrentScreen.Menu:
                     if (menuScreen.Update(gameTime))
                     {
+                        MediaPlayer.Play(music);
                         currentScreen = CurrentScreen.GamePlay;
                         gameplayScreen.ResetGamePlay();
                         gameplayScreen.Load(Content);
                     }
                     break;
                 case CurrentScreen.GamePlay:
-                    if (gameplayScreen.Update(gameTime)) { currentScreen = CurrentScreen.Menu; }
+                    if (gameplayScreen.Update(gameTime)) { endScreen.Load(gameplayScreen); currentScreen = CurrentScreen.EndScreen; }
                     break;             
                 case CurrentScreen.EndScreen:
+                    MediaPlayer.Stop();
                     break;
             }
 
