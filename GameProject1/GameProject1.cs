@@ -44,7 +44,7 @@ namespace GameProject1
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            graphics.PreferredBackBufferHeight = 960;
+            graphics.PreferredBackBufferHeight = 720;
             graphics.PreferredBackBufferWidth = 1280;
         }
 
