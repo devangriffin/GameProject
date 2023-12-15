@@ -195,8 +195,8 @@ namespace GameProject1.Screens
             // alienBall.Draw(gameTime, sb);
 
             sb.DrawString(font, "Coins Collected: " + CoinsCollected, new Vector2(0, 0), Color.Gold);
-            if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
-            else { sb.DrawString(font, "Time: " + minutes + ":" + (int)seconds, new Vector2(0, graphics.PreferredBackBufferHeight - 30), Color.Gold); }
+            if (seconds < 10) { sb.DrawString(font, "Time: " + minutes + ":0" + (int)seconds, new Vector2(graphics.PreferredBackBufferWidth - 120, 0), Color.Gold); }
+            else { sb.DrawString(font, "Time: " + minutes + ":" + (int)seconds, new Vector2(graphics.PreferredBackBufferWidth - 120, 0), Color.Gold); }
             // sb.DrawString(font, "Level " + level, new Vector2(graphics.PreferredBackBufferWidth - 60, 0), Color.Gold);
 
             return true;
